@@ -1,4 +1,4 @@
-const vahak_ext = () => {
+const vahak_ext = function(){
     this.vahak_feedback_store = {
         isLoaded: false,
         isStarted: false,
@@ -33,8 +33,8 @@ const vahak_ext = () => {
             console.log(url);
         }
     }
-    this.addFeedButton = () => {
-        const button = window.$("<button id='vahak-feedback-btn' style='background: red;padding: 0.75rem;border-radius: 0.95rem 0.95rem 0.95rem 0rem;color: white;font-family: fantasy;font-weight: 500;font-size: 1.55rem;'>Loading...</button>");
+    this.addFeedButton = (hashChane) => {
+        const button = window.$("<button id='vahak-feedback-btn' style='background: red;padding: 0.75rem;border-radius: 0.95rem 0.95rem 0.95rem 0rem;color: white;font-family: fantasy;font-weight: 500;font-size: 1.55rem;'>"+(hashChane ? "Ready":"Loading...")+"</button>");
         button.prependTo(window.$(".rc-header__block.rc-header__block-action"));
         setTimeout(() => {
             document.querySelector("#vahak-feedback-btn").addEventListener("click", this.feedbackBtnhandler);
@@ -100,6 +100,22 @@ const vahak_ext = () => {
     this.afterDomload = () => {
         console.log("Hello from vahak_ext");
         console.log(window.jQuery);
+        // button adder on change url
+        let lastUrl = location.href; 
+        new MutationObserver(() => {
+        const url = location.href;
+        if (url !== lastUrl) {
+            lastUrl = url;
+            onUrlChange();
+        }
+        }).observe(document, {subtree: true, childList: true});
+        
+        
+        function onUrlChange() {
+        if(!document.querySelector("#vahak-feedback-btn")){
+            setTimeout(this.addFeedButton(true), 180);    
+        }
+        }
         setTimeout(this.addFeedButton, 300);
         // if (!window.jQuery) {
         //     const jquery_url = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js';
